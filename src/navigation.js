@@ -20,8 +20,8 @@ export default function HomeStackNaVigator() {
   return (
     <Stack.Navigator screenOptions={screenOptionStyle} initialRouteName="Home">
       <Stack.Screen name="Ana Sayfa" component={Home} />
-      <Stack.Screen name="Ayarlar" component={Settings} />
-      <Stack.Screen name="Son Depremler" component={SonDepremler} />
+      <Stack.Screen name="Ayarlar"  component={Settings} />
+      <Stack.Screen name="Son Depremler"   component={SonDepremler} />
       <Stack.Screen name="Hakkımızda" component={About} />
     </Stack.Navigator>
   );
