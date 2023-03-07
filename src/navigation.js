@@ -18,19 +18,7 @@ const screenOptionStyle = {
 
 export default function HomeStackNaVigator() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerRight: () => (
-          <TouchableOpacity
-            onPress={() => alert("Settings button clicked!")}
-            style={{ marginRight: 15 }}
-          >
-            <FontAwesome name="gear" size={25} color="#000" />
-          </TouchableOpacity>
-        ),
-      }}
-      initialRouteName="Home"
-    >
+    <Stack.Navigator screenOptions={screenOptionStyle} initialRouteName="Home">
       <Stack.Screen name="Ana Sayfa" component={Home} />
       <Stack.Screen name="Ayarlar" component={Settings} />
       <Stack.Screen name="Son Depremler" component={SonDepremler} />

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Deprem_App",
-    "slug": "Deprem_App",
+    "name": "Deprem Bilgi",
+    "slug": "Deprem Bilgi",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

@@ -7,38 +7,40 @@ import {
   ImageBackground,
   ScrollView,
   RefreshControl,
+  Modal,
+  Linking,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { FontAwesome } from "@expo/vector-icons";
-// import { data } from "./data-example";
 
 function SonDepremler(props) {
   const [depremler, setDepremler] = React.useState([]);
-
-  useEffect(() => {
-    fetch("https://api.kursad.app/deprem/last?count=50")
-      .then((response) => response.json())
-      .then((data) => setDepremler(data))
-      .catch((error) => console.error(error));
-  }, []);
-
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-  const wait = (timeout) => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, timeout);
-    });
-  };
+  const [isVisible, setIsVisible] = useState(null);
 
   const [isHovered, setIsHovered] = useState(false);
   const [isHovered2, setIsHovered2] = useState(false);
   const [isHovered3, setIsHovered3] = useState(false);
   const [isHovered4, setIsHovered4] = useState(false);
+
+  useEffect(() => {
+    fetch("https://api.kursad.app/deprem/last?count=50")
+      .then((response) => response.json())
+      .then((data) => setDepremler(data.data))
+      .catch((error) => console.error(error));
+  }, []);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    fetch("https://api.kursad.app/deprem/last?count=50")
+      .then((response) => response.json())
+      .then((data) => {
+        setDepremler(data.data);
+        setRefreshing(false);
+      });
+  }, []);
 
   const handlePressIn = () => {
     setIsHovered(true);
@@ -94,7 +96,7 @@ function SonDepremler(props) {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "#00000070",
+          backgroundColor: "#4e4e4e9c",
         }}
       >
         {/* Büyüklük: 4.0 Derinlik: 6.6 Tarih: 04.03.2023 Saat: 06:03:40 */}
@@ -117,71 +119,194 @@ function SonDepremler(props) {
             paddingVertical: 35,
           }}
         >
+          {/* Deprem büyüklüğüne göre ya yazının backgroundu yada yazının rengi değişsin  */}
           <View style={styles.cards}>
             {depremler.map((deprem) => (
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>
-                  {/* Deprem büyüklüğüne göre ya yazının backgroundu yada yazının rengi değişsin  */}
-                  {deprem.location}
-                </Text>
-                <View
-                  style={{
-                    borderBottomColor: "#000",
-                    borderBottomWidth: 0.2,
-                    width: "106%",
-                    marginLeft: -10,
-                    marginTop: 10,
-                    marginBottom: 25,
+              <View style={styles.card} key={deprem.id}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsVisible(deprem.id);
                   }}
-                ></View>
-                <Image
-                  style={{
-                    width: 300,
-                    height: 150,
-                    resizeMode: "contain",
-                    marginLeft: 10,
-                    // borderColor: "#000",
-                    // borderWidth: 1,
-                  }}
-                  source={{ uri: deprem.map_url }}
-                />
-                <View
-                  style={{
-                    borderBottomColor: "#000",
-                    borderBottomWidth: 0.4,
-                    width: "106%",
-                    marginLeft: -10,
-                    marginTop: 10,
-                    marginBottom: 25,
-                  }}
-                ></View>
-                <View style={styles.cardTexts}>
-                  <View>
-                    <Text style={styles.cardtext}>
-                      Büyüklüğü:
-                      <Text style={styles.cardtext2}> {deprem.magnitude}</Text>
-                    </Text>
-                    <Text style={styles.cardtext}>
-                      Derinlik:
-                      <Text style={styles.cardtext2}> {deprem.depth}</Text>
-                    </Text>
-                  </View>
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.cardTitle}>
+                    {deprem.magnitude} - {deprem.location}
+                  </Text>
                   <View
                     style={{
-                      borderLeftColor: "#000",
-                      borderLeftWidth: 0.2,
+                      width: 12,
+                      height: 12,
+                      borderRadius: 50,
+                      borderWidth: 1,
+                      borderColor: "red",
+                      backgroundColor:
+                        deprem.magnitude >= 4.0 && deprem.magnitude <= 4.9
+                          ? "yellow"
+                          : deprem.magnitude >= 5.0 && deprem.magnitude <= 5.9
+                          ? "orange"
+                          : deprem.magnitude >= 6.0 && deprem.magnitude <= 6.9
+                          ? "red"
+                          : deprem.magnitude >= 7.0 && deprem.magnitude <= 7.9
+                          ? "purple"
+                          : deprem.magnitude >= 8.0 && deprem.magnitude <= 8.9
+                          ? "brown"
+                          : deprem.magnitude >= 1.0 && deprem.magnitude <= 2.0
+                          ? "green"
+                          : deprem.magnitude >= 2.1 && deprem.magnitude <= 3.0,
+                      position: "absolute",
+                      top: 0,
+                      right: 0,
+                    }}
+                  />
+                  <View
+                    style={{
+                      borderBottomColor: "#000",
+                      borderBottomWidth: 0.2,
+                      width: "106%",
+                      marginLeft: -10,
+                      marginTop: 10,
+                      marginBottom: 25,
                     }}
                   ></View>
-                  <View>
-                    <Text style={styles.cardtext}>
-                      Tarih:
-                      <Text style={styles.cardtext2}> {deprem.date}</Text>
-                    </Text>
-                    <Text style={styles.cardtext}>
-                      Saat: <Text style={styles.cardtext2}> {deprem.time}</Text>
-                    </Text>
+                  <Image
+                    style={{
+                      width: 300,
+                      height: 150,
+                      resizeMode: "contain",
+                      marginLeft: 10,
+                      // borderColor: "#000",
+                      // borderWidth: 1,
+                    }}
+                    source={{ uri: deprem.map_url }}
+                  />
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: "#4d4d4d",
+                      textAlign: "right",
+                    }}
+                  >
+                    {deprem.time}
+                  </Text>
+                </TouchableOpacity>
+                <View
+                  style={{
+                    borderBottomColor: "#000",
+                    // borderBottomWidth: 0.4,
+                    width: "106%",
+                    marginLeft: -10,
+                    marginTop: 10,
+                    marginBottom: 25,
+                  }}
+                ></View>
+                <Modal
+                  animationType="none"
+                  transparent={true}
+                  visible={isVisible === deprem.id}
+                  statusBarTranslucent={true}
+                  onRequestClose={() => {
+                    setIsVisible(false);
+                  }}
+                  hardwareAccelerated={Platform.OS === "android" ? true : false}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "#7979799c",
+                    }}
+                  >
+                    <View style={styles.Modalcard}>
+                      <Text style={styles.cardTitle}>{deprem.location}</Text>
+                      <View
+                        style={{
+                          borderBottomColor: "#000",
+                          borderBottomWidth: 0.2,
+                          width: "106%",
+                          marginLeft: -10,
+                          marginTop: 10,
+                          marginBottom: 25,
+                        }}
+                      ></View>
+                      <TouchableOpacity
+                        style={{
+                          position: "absolute",
+                          top: 10,
+                          right: 10,
+                        }}
+                        onPress={() => setIsVisible(null)}
+                      >
+                        <FontAwesome name="close" size={25} color="#000" />
+                      </TouchableOpacity>
+                      <Image
+                        style={{
+                          width: 300,
+                          height: 150,
+                          resizeMode: "contain",
+                          marginLeft: 10,
+                          // borderColor: "#000",
+                          // borderWidth: 1,
+                        }}
+                        source={{ uri: deprem.map_url }}
+                      />
+                      <View
+                        style={{
+                          borderBottomColor: "#000",
+                          borderBottomWidth: 0.4,
+                          width: "106%",
+                          marginLeft: -10,
+                          marginTop: 10,
+                          marginBottom: 25,
+                        }}
+                      ></View>
+                      <View style={styles.cardTexts}>
+                        <View>
+                          <Text style={styles.cardtext}>
+                            Büyüklüğü:
+                            <Text style={styles.cardtext2}>
+                              {" "}
+                              {deprem.magnitude}
+                            </Text>
+                          </Text>
+                          <Text style={styles.cardtext}>
+                            Derinlik:
+                            <Text style={styles.cardtext2}>
+                              {" "}
+                              {deprem.depth}
+                            </Text>
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            borderLeftColor: "#000",
+                            borderLeftWidth: 0.2,
+                          }}
+                        ></View>
+                        <View>
+                          <Text style={styles.cardtext}>
+                            Tarih:
+                            <Text style={styles.cardtext2}> {deprem.date}</Text>
+                          </Text>
+                          <Text style={styles.cardtext}>
+                            Saat:{" "}
+                            <Text style={styles.cardtext2}> {deprem.time}</Text>
+                          </Text>
+                        </View>
+                      </View>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: "#4d4d4d",
+                          textAlign: "right",
+                          margin: 5,
+                        }}
+                      >
+                        Haritada Gör
+                      </Text>
+                    </View>
                   </View>
-                </View>
+                </Modal>
               </View>
             ))}
           </View>
@@ -341,5 +466,15 @@ const styles = StyleSheet.create({
     color: "#1A120B",
     marginBottom: 5,
     fontWeight: "normal",
+  },
+  Modalcard: {
+    width: "90%",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 10,
+    elevation: 5,
+    marginBottom: 25,
+    marginHorizontal: 20,
+    marginTop: 100,
   },
 });
