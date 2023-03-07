@@ -53,7 +53,7 @@ const Home = (props) => {
         backgroundColor: "#dceef5",
       }}
     >
-      <Text>Home</Text>
+      <Text className="flex-1 items-center justify-center bg-red">Home</Text>
 
       {/* Bottom Navigation Bar */}
       <View style={styles.navbar}>

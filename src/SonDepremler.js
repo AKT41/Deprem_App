@@ -81,7 +81,13 @@ function SonDepremler(props) {
   const image = {
     uri: "https://images.unsplash.com/photo-1603869311144-66b03d340b32?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8ZWFydGhxdWFrZXxlbnwwfHwwfHw%3D&w=1000&q=80",
   };
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2500);
+  }, []);
   return (
     <ImageBackground
       source={image}
@@ -119,55 +125,79 @@ function SonDepremler(props) {
             paddingVertical: 35,
           }}
         >
+          <View
+            style={{
+              flex: 1,
+              position: "absolute",
+              top: 95,
+            }}
+          >
+            {loading ? (
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "500",
+                  marginBottom: 10,
+                  color: "white",
+                }}
+              >
+                Yükleniyor...
+              </Text>
+            ) : null}
+          </View>
           {/* Deprem büyüklüğüne göre ya yazının backgroundu yada yazının rengi değişsin  */}
           <View style={styles.cards}>
             {depremler.map((deprem) => (
               <View style={styles.card} key={deprem.id}>
+                <Text style={styles.cardTitle}>
+                  {deprem.magnitude} - {deprem.location}
+                </Text>
+                <View
+                  style={{
+                    width: 20,
+                    height: 20,
+                    borderRadius: 10,
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 50,
+                    borderBottomRightRadius: 0,
+                    borderWidth: 1,
+                    borderColor: "#ffffff00",
+                    backgroundColor:
+                      deprem.magnitude >= 1.0 && deprem.magnitude <= 3.0
+                        ? "green"
+                        : deprem.magnitude >= 3.1 && deprem.magnitude <= 4.0
+                        ? "orange"
+                        : deprem.magnitude >= 4.1 && deprem.magnitude <= 5.0
+                        ? "#ff5e00"
+                        : deprem.magnitude >= 5.1 && deprem.magnitude <= 6.0
+                        ? "#ff3300"
+                        : deprem.magnitude >= 6.1 && deprem.magnitude <= 7.9
+                        ? "red"
+                        : deprem.magnitude >= 8,
+
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    margin: 0,
+                    padding: 0,
+                  }}
+                />
+                <View
+                  style={{
+                    borderBottomColor: "#000",
+                    borderBottomWidth: 0.5,
+                    width: "106%",
+                    marginLeft: -10,
+                    marginTop: 10,
+                    marginBottom: 25,
+                  }}
+                />
                 <TouchableOpacity
                   onPress={() => {
                     setIsVisible(deprem.id);
                   }}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.cardTitle}>
-                    {deprem.magnitude} - {deprem.location}
-                  </Text>
-                  <View
-                    style={{
-                      width: 12,
-                      height: 12,
-                      borderRadius: 50,
-                      borderWidth: 1,
-                      borderColor: "red",
-                      backgroundColor:
-                        deprem.magnitude >= 4.0 && deprem.magnitude <= 4.9
-                          ? "yellow"
-                          : deprem.magnitude >= 5.0 && deprem.magnitude <= 5.9
-                          ? "orange"
-                          : deprem.magnitude >= 6.0 && deprem.magnitude <= 6.9
-                          ? "red"
-                          : deprem.magnitude >= 7.0 && deprem.magnitude <= 7.9
-                          ? "purple"
-                          : deprem.magnitude >= 8.0 && deprem.magnitude <= 8.9
-                          ? "brown"
-                          : deprem.magnitude >= 1.0 && deprem.magnitude <= 2.0
-                          ? "green"
-                          : deprem.magnitude >= 2.1 && deprem.magnitude <= 3.0,
-                      position: "absolute",
-                      top: 0,
-                      right: 0,
-                    }}
-                  />
-                  <View
-                    style={{
-                      borderBottomColor: "#000",
-                      borderBottomWidth: 0.2,
-                      width: "106%",
-                      marginLeft: -10,
-                      marginTop: 10,
-                      marginBottom: 25,
-                    }}
-                  ></View>
                   <Image
                     style={{
                       width: 300,
@@ -179,16 +209,20 @@ function SonDepremler(props) {
                     }}
                     source={{ uri: deprem.map_url }}
                   />
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: "#4d4d4d",
-                      textAlign: "right",
-                    }}
-                  >
-                    {deprem.time}
-                  </Text>
                 </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: "#4d4d4d",
+                    textAlign: "right",
+                    position: "absolute",
+                    bottom: 10,
+                    right: 10,
+                  }}
+                >
+                  {deprem.time}
+                </Text>
+
                 <View
                   style={{
                     borderBottomColor: "#000",
@@ -218,7 +252,9 @@ function SonDepremler(props) {
                     }}
                   >
                     <View style={styles.Modalcard}>
-                      <Text style={styles.cardTitle}>{deprem.location}</Text>
+                      <Text style={styles.cardTitle}>
+                        {deprem.magnitude} - {deprem.location}
+                      </Text>
                       <View
                         style={{
                           borderBottomColor: "#000",
@@ -273,7 +309,7 @@ function SonDepremler(props) {
                             Derinlik:
                             <Text style={styles.cardtext2}>
                               {" "}
-                              {deprem.depth}
+                              {deprem.depth} km
                             </Text>
                           </Text>
                         </View>
@@ -282,8 +318,12 @@ function SonDepremler(props) {
                             borderLeftColor: "#000",
                             borderLeftWidth: 0.2,
                           }}
-                        ></View>
-                        <View>
+                        />
+                        <View
+                          style={{
+                            marginRight: 15,
+                          }}
+                        >
                           <Text style={styles.cardtext}>
                             Tarih:
                             <Text style={styles.cardtext2}> {deprem.date}</Text>
