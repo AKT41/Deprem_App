@@ -13,9 +13,9 @@ Run `npm start` to start the app.
 ## Screenshots
 
 
-<img src="https://i.hizliresim.com/ovlvhyj.jpg" width="200" height="400"/>
+<img src="https://i.hizliresim.com/ovlvhyj.jpg"  height="400"/>
 
-<img src="https://i.hizliresim.com/983mwze.jpg" width="200" height="400"/>
+<img src="https://i.hizliresim.com/983mwze.jpg"  height="400"/>
 
-<img src="https://i.hizliresim.com/b0cdluv.jpg" width="200" height="400"/>
+<img src="https://i.hizliresim.com/b0cdluv.jpg" height="400"/>
 
